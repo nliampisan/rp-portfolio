@@ -6,16 +6,10 @@ from selenium import webdriver
 import time
 from django.contrib.auth import authenticate
 
-#from apps.digital.models import User
-
 
 class MyTests(StaticLiveServerTestCase):
 
-    # port = 0
-    # host = 'my host'
-
     def setUp(self):
-        # super(MyTests, self).setUp()
         self.selenium = webdriver.Chrome(r"C:/Users/nliam/OneDrive/Documents/chromedriver_win32/chromedriver.exe")
         self.client = Client()
         self.user = User.objects.create_superuser(username='test', password='Test1234', email='test@test.com', is_active=True)
@@ -23,7 +17,6 @@ class MyTests(StaticLiveServerTestCase):
 
     def tearDown(self):
         self.selenium.quit()
-        # super(MyTests, self).tearDown()
 
     def test_login(self):
         self.user = authenticate(username='test', password='Test1234')
