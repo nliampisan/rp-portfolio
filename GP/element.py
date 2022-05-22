@@ -16,6 +16,9 @@ class Element:
     def get_url(self):
         return self.url
 
+    def get_type(self):
+        return self.elem_type
+
     def random(self):
         self.set_type(random.randint(0,3))
 

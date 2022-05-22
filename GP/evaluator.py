@@ -1,16 +1,13 @@
 import numpy as np
-
+from selenium.webdriver.common.by import By
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
 from GP.testcasegen import TestCaseGenerator
 from GP.function import *
+import random
+import string
 
-
-from math import sin, cos
-primitives = [["ADD", "reg[out] = reg[in1] + reg[in2]"], \
-              ["SUB", "reg[out] = reg[in1] - reg[in2]"], \
-              ["MUL", "reg[out] = reg[in1] * reg[in2]"], \
-              ["DIV", "if reg[in2] == 0:\n    reg[out] = 1\nelse:\n    reg[out] = reg[in1] / reg[in2]"], \
-              ["SIN", "reg[out] = sin(reg[in1])"], \
-              ["COS", "reg[out] = cos(reg[in1])"]]
+primitives = ["link", "button", "input-text", "text-area"]
 
 
 class Evaluator:
@@ -27,12 +24,73 @@ class Evaluator:
             self.eval_indiv(indiv)
 
     def eval_indiv(self, indiv):
-        sum_sq_err = 0.0
-        for tc in self.test_cases:
-            y = self._execute(indiv.genes, tc.x)
-            sum_sq_err += (tc.y - y) ** 2
+        self.driver = webdriver.Chrome(r"C:/Users/nliam/OneDrive/Documents/chromedriver_win32/chromedriver.exe")
+        self.driver.get('http://127.0.0.1:8000/projects/')
+        cur_url = 'http://127.0.0.1:8000/projects/'
+        num_success_actions = 0
+        num_webpages = 0
+        for gene in indiv.genes:
+            element_type = gene.get_type()
+            gene.set_url(self.driver.current_url)
+            if element_type == 0:
+                try:
+                    elems = self.driver.find_elements(by=By.XPATH, value="//a[@href]")
+                    try:
+                        elems[random.randint(len(elems))].click()
+                        num_success_actions += 1
+                        if self.driver.current_url != cur_url:
+                            num_webpages += 1
+                            cur_url = self.driver.current_url
+                    except:
+                        pass
+                except:
+                    pass
+            elif element_type == 1:
+                try:
+                    elems = self.driver.find_elements(by=By.TAG_NAME, value="button")
+                    try:
+                        elems[random.randint(len(elems))].click()
+                        num_success_actions += 1
+                        if self.driver.current_url != cur_url:
+                            num_webpages += 1
+                            cur_url = self.driver.current_url
+                    except:
+                        pass
+                except:
+                    pass
+            elif element_type == 2:
+                try:
+                    elems = self.driver.find_elements(by=By.XPATH, value="//input[@type='text']")
+                    try:
+                        input_data = ''.join(random.choice(string.ascii_letters) for i in range(random.randint(10)))
+                        elems[random.randint(len(elems))].send_keys(input_data)
+                        num_success_actions += 1
+                        if self.driver.current_url != cur_url:
+                            num_webpages += 1
+                            cur_url = self.driver.current_url
+                    except:
+                        pass
+                except:
+                    pass
+
+            elif element_type == 3:
+                try:
+                    elems = self.driver.find_elements(by=By.TAG_NAME, value="textarea")
+                    try:
+                        input_data = ''.join(random.choice(string.ascii_letters) for i in range(random.randint(10)))
+                        elems[random.randint(len(elems))].send_keys(input_data)
+                        num_success_actions += 1
+                        if self.driver.current_url != cur_url:
+                            num_webpages += 1
+                            cur_url = self.driver.current_url
+                    except:
+                        pass
+                except:
+                    pass
+            else:
+                pass
             # indiv.fitness = float(-sum_sq_err / len(test_cases))
-        indiv.fitness = float(-sum_sq_err)
+        indiv.fitness = num_success_actions + 10*num_webpages
 
     def decode_indiv(self, indiv):
         program = ""
