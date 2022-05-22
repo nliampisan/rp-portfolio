@@ -11,13 +11,8 @@ primitives = ["link", "button", "input-text", "text-area"]
 
 
 class Evaluator:
-    def __init__(self, primitives, test_cases, num_regs):
-        # self.params = params
-        self.num_regs = num_regs
-        self.registers = np.zeros(self.num_regs)
-        self.primitives = primitives
-        self.num_primitives = len(primitives)
-        self.test_cases = test_cases
+    def __init__(self):
+        pass
 
     def eval_pop(self, pop):
         for indiv in pop.indivs:
@@ -35,95 +30,60 @@ class Evaluator:
             if element_type == 0:
                 elems = self.driver.find_elements(by=By.XPATH, value="//a[@href]")
                 elem_offset = random.randint(0,len(elems)-1)
-                elems[elem_offset].click()
+                try:
+                    elems[elem_offset].click()
+                except:
+                    continue
                 num_success_actions += 1
                 if self.driver.current_url != cur_url:
                     num_webpages += 1
                     cur_url = self.driver.current_url
             elif element_type == 1:
+                elems = self.driver.find_elements(by=By.TAG_NAME, value="button")
+                elem_offset = random.randint(0,len(elems)-1)
                 try:
-                    elems = self.driver.find_elements(by=By.TAG_NAME, value="button")
-                    try:
-                        elem_offset = random.randint(0,len(elems)-1)
-                        print(elems[elem_offset].get_attribute("name"))
-                        elems[elem_offset].click()
-                        num_success_actions += 1
-                        if self.driver.current_url != cur_url:
-                            num_webpages += 1
-                            cur_url = self.driver.current_url
-                    except:
-                        pass
+                    elems[elem_offset].click()
                 except:
-                    pass
+                    continue
+                num_success_actions += 1
+                if self.driver.current_url != cur_url:
+                    num_webpages += 1
+                    cur_url = self.driver.current_url
+
             elif element_type == 2:
+                elems = self.driver.find_elements(by=By.XPATH, value="//input[@type='text']")
+                input_data = ''.join(random.choice(string.ascii_letters) for i in range(random.randint(1,10)))
+                # print(input_data)
                 try:
-                    elems = self.driver.find_elements(by=By.XPATH, value="//input[@type='text']")
-                    try:
-                        input_data = ''.join(random.choice(string.ascii_letters) for i in range(random.randint(10)))
-                        elem_offset = random.randint(0,len(elems)-1)
-                        print(elems[elem_offset].get_attribute("name"))
-                        elems[elem_offset].send_keys(input_data)
-                        num_success_actions += 1
-                        if self.driver.current_url != cur_url:
-                            num_webpages += 1
-                            cur_url = self.driver.current_url
-                    except:
-                        pass
+                    elem_offset = random.randint(0, len(elems) - 1)
+                    # print(elems[elem_offset].get_attribute("name"))
+                    # print(input_data)
+                    elems[elem_offset].send_keys(input_data)
+                    # print("send key success")
                 except:
-                    pass
+                    continue
+                num_success_actions += 1
+                if self.driver.current_url != cur_url:
+                    num_webpages += 1
+                    cur_url = self.driver.current_url
 
             elif element_type == 3:
+                elems = self.driver.find_elements(by=By.TAG_NAME, value="textarea")
+                input_data = ''.join(random.choice(string.ascii_letters) for i in range(random.randint(1,10)))
+                # print(input_data)
                 try:
-                    elems = self.driver.find_elements(by=By.TAG_NAME, value="textarea")
-                    try:
-                        input_data = ''.join(random.choice(string.ascii_letters) for i in range(random.randint(10)))
-                        elem_offset = random.randint(0,len(elems)-1)
-                        print(elems[elem_offset].get_attribute("name"))
-                        print(input_data)
-                        elems[elem_offset].send_keys(input_data)
-                        print("send key success")
-                        num_success_actions += 1
-                        if self.driver.current_url != cur_url:
-                            num_webpages += 1
-                            cur_url = self.driver.current_url
-                    except:
-                        pass
+                    elem_offset = random.randint(0, len(elems) - 1)
+                    # print(elems[elem_offset].get_attribute("name"))
+                    # print(input_data)
+                    elems[elem_offset].send_keys(input_data)
+                    # print("send key success")
                 except:
-                    pass
+                    continue
+                num_success_actions += 1
+                if self.driver.current_url != cur_url:
+                    num_webpages += 1
+                    cur_url = self.driver.current_url
             else:
                 pass
-            # indiv.fitness = float(-sum_sq_err / len(test_cases))
         indiv.fitness = num_success_actions + 10*num_webpages
         self.driver.close()
-
-    def decode_indiv(self, indiv):
-        program = ""
-        for instr in indiv.genes:
-            opcode, out, in1, in2 = self._decode_instr(instr)
-            line = (primitives[opcode][1] + "\n")
-            line = line.replace("out", str(out))
-            line = line.replace("in1", str(in1))
-            line = line.replace("in2", str(in2))
-            program += line
-        return program
-
-    def _execute(self, genes, x):
-        self._reset_reg(x)
-        reg = self.registers
-        for instr in genes:
-            opcode, out, in1, in2 = self._decode_instr(instr)
-            exec(self.primitives[opcode][1])
-        return reg[0]
-
-    def _reset_reg(self, x):
-        for i in range(len(self.registers)):
-            self.registers[i] = 1
-        for i in range(len(x)):
-            self.registers[i] = x[i]
-
-    def _decode_instr(self, instr):
-        instr.opcode %= self.num_primitives
-        instr.out_reg %= self.num_regs
-        instr.in_reg1 %= self.num_regs
-        instr.in_reg2 %= self.num_regs
-        return instr.opcode, instr.out_reg, instr.in_reg1, instr.in_reg2

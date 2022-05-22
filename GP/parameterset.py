@@ -10,9 +10,6 @@ class ParameterSet:
         # Individual-related parameters
         self.num_instrs = 10
 
-        # Evaluator-related parameters
-        self.num_regs = 8
-
         # Breeder-related parameters
         self.ts = 2  # Tournament size
         self.pc = 0.9  # Crossover rate
@@ -29,7 +26,6 @@ class ParameterSet:
         print("Maximum number of generations =", self.max_gen)
         print("Population size =", self.pop_size)
         print("Number of instructions (fixed) =", self.num_instrs)
-        print("Number of registers =", self.num_regs)
         print("Tournament size =", self.ts)
         print("Crossover rate =", self.pc)
         print("Mutation rate =", self.pm)
