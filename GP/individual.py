@@ -11,7 +11,7 @@ class Individual:
         return len(self.genes)
 
     def can_cross(self, p2, crossover_pt):
-        if self.genes[crossover_pt+1].get_url() == self.p2.genes[crossover_pt+1].get_url():
+        if self.genes[crossover_pt].get_url() == p2.genes[crossover_pt].get_url():
             return True
         else:
             return False

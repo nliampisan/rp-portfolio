@@ -33,23 +33,20 @@ class Evaluator:
             element_type = gene.get_type()
             gene.set_url(self.driver.current_url)
             if element_type == 0:
-                try:
-                    elems = self.driver.find_elements(by=By.XPATH, value="//a[@href]")
-                    try:
-                        elems[random.randint(len(elems))].click()
-                        num_success_actions += 1
-                        if self.driver.current_url != cur_url:
-                            num_webpages += 1
-                            cur_url = self.driver.current_url
-                    except:
-                        pass
-                except:
-                    pass
+                elems = self.driver.find_elements(by=By.XPATH, value="//a[@href]")
+                elem_offset = random.randint(0,len(elems)-1)
+                elems[elem_offset].click()
+                num_success_actions += 1
+                if self.driver.current_url != cur_url:
+                    num_webpages += 1
+                    cur_url = self.driver.current_url
             elif element_type == 1:
                 try:
                     elems = self.driver.find_elements(by=By.TAG_NAME, value="button")
                     try:
-                        elems[random.randint(len(elems))].click()
+                        elem_offset = random.randint(0,len(elems)-1)
+                        print(elems[elem_offset].get_attribute("name"))
+                        elems[elem_offset].click()
                         num_success_actions += 1
                         if self.driver.current_url != cur_url:
                             num_webpages += 1
@@ -63,7 +60,9 @@ class Evaluator:
                     elems = self.driver.find_elements(by=By.XPATH, value="//input[@type='text']")
                     try:
                         input_data = ''.join(random.choice(string.ascii_letters) for i in range(random.randint(10)))
-                        elems[random.randint(len(elems))].send_keys(input_data)
+                        elem_offset = random.randint(0,len(elems)-1)
+                        print(elems[elem_offset].get_attribute("name"))
+                        elems[elem_offset].send_keys(input_data)
                         num_success_actions += 1
                         if self.driver.current_url != cur_url:
                             num_webpages += 1
@@ -78,7 +77,11 @@ class Evaluator:
                     elems = self.driver.find_elements(by=By.TAG_NAME, value="textarea")
                     try:
                         input_data = ''.join(random.choice(string.ascii_letters) for i in range(random.randint(10)))
-                        elems[random.randint(len(elems))].send_keys(input_data)
+                        elem_offset = random.randint(0,len(elems)-1)
+                        print(elems[elem_offset].get_attribute("name"))
+                        print(input_data)
+                        elems[elem_offset].send_keys(input_data)
+                        print("send key success")
                         num_success_actions += 1
                         if self.driver.current_url != cur_url:
                             num_webpages += 1
@@ -91,6 +94,7 @@ class Evaluator:
                 pass
             # indiv.fitness = float(-sum_sq_err / len(test_cases))
         indiv.fitness = num_success_actions + 10*num_webpages
+        self.driver.close()
 
     def decode_indiv(self, indiv):
         program = ""

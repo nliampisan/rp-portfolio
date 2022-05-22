@@ -4,7 +4,7 @@ primitives = ["link", "button", "input-text", "text-area"]
 
 class Element:
     def __init__(self):
-        self.elem_type = self.random
+        self.elem_type = random.randint(0,3)
         self.url = None
 
     def set_type(self, elem_type):
@@ -20,7 +20,7 @@ class Element:
         return self.elem_type
 
     def random(self):
-        self.set_type(random.randint(0,3))
+        self.elem_type = random.randint(0,3)
 
     def __str__(self):
-        return "[" + str(primitives[self.elem_type]) + "]"
+        return "[" + str(self.elem_type) + "]"
