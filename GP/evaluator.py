@@ -26,7 +26,8 @@ class Evaluator:
         num_webpages = 0
         for gene in indiv.genes:
             element_type = gene.get_type()
-            gene.set_url(self.driver.current_url)
+            new_url = self.driver.current_url
+            gene.set_url(new_url)
             if element_type == 0:
                 elems = self.driver.find_elements(by=By.XPATH, value="//a[@href]")
                 elem_offset = random.randint(0,len(elems)-1)

@@ -13,9 +13,9 @@ random.seed(1)
 params = ParameterSet()
 # Adjust some parameters
 params.is_maximize = True
-params.max_gen = 2
-params.pop_size = 4
-params.num_instrs = 5
+params.max_gen = 20
+params.pop_size = 10
+params.num_instrs = 10
 # Verify parameters
 params.print()
 

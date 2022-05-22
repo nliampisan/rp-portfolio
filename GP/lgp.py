@@ -42,10 +42,6 @@ class LGP:
         # Reset state
         self._reset()
 
-
-        mutate_list = list()
-        crossover_list = list()
-
         # Loop
         for self.gen in range(self.params.max_gen):
             # Evaluate current population
@@ -69,6 +65,7 @@ class LGP:
 
             # Delay
             time.sleep(0.5)
+            self.plot_stats()
 
         return self.best_so_far
 
