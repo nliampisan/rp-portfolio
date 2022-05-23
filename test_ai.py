@@ -119,7 +119,6 @@ class MyTests(StaticLiveServerTestCase):
         input.send_keys("text area")
         time.sleep(2)
         button.click()
-        time.sleep(10)
 
     def tearDown(self):
         self.driver.close()
